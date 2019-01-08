@@ -24,50 +24,51 @@ module Identifier = struct
 
     module Signature = struct
 
-      type 'a t =
-        | Root of 'a * UnitName.t
-        | Module of 'a t * ModuleName.t
-        | FunctorParameter of 'a t * FunctorParameterName.t
-        | FunctorResult of 'a t
-        | ModuleType of 'a t * ModuleTypeName.t
+      type 'a t = [
+        | `Root of 'a * UnitName.t
+        | `Module of 'a t * ModuleName.t
+        | `FunctorParameter of 'a t * FunctorParameterName.t
+        | `FunctorResult of 'a t
+        | `ModuleType of 'a t * ModuleTypeName.t
+      ]
 
       let equal ~equal id1 id2 =
         let rec loop ~equal id1 id2 =
           match id1, id2 with
-          | Root(r1, s1), Root(r2, s2) ->
+          | `Root(r1, s1), `Root(r2, s2) ->
               UnitName.equal s1 s2
               && equal r1 r2
-          | Root _, _ -> false
-          | Module(id1, s1), Module(id2, s2) ->
+          | `Root _, _ -> false
+          | `Module(id1, s1), `Module(id2, s2) ->
               ModuleName.equal s1 s2
               && loop ~equal id1 id2
-          | Module _, _ -> false
-          | FunctorParameter(id1, s1), FunctorParameter(id2, s2) ->
+          | `Module _, _ -> false
+          | `FunctorParameter(id1, s1), `FunctorParameter(id2, s2) ->
               FunctorParameterName.equal s1 s2
               && loop ~equal id1 id2
-          | FunctorParameter _, _ -> false
-          | FunctorResult id1, FunctorResult id2 ->
+          | `FunctorParameter _, _ -> false
+          | `FunctorResult id1, `FunctorResult id2 ->
               loop ~equal id1 id2
-          | FunctorResult _, _ -> false
-          | ModuleType(id1, s1), ModuleType(id2, s2) ->
+          | `FunctorResult _, _ -> false
+          | `ModuleType(id1, s1), `ModuleType(id2, s2) ->
               ModuleTypeName.equal s1 s2
               && loop ~equal id1 id2
-          | ModuleType _, _ -> false
+          | `ModuleType _, _ -> false
         in
         loop ~equal id1 id2
 
       let rec hash ~hash id =
         let rec loop ~hash id =
           match id with
-          | Root(r, s) ->
+          | `Root(r, s) ->
               Hashtbl.hash (1, hash r, s)
-          | Module(id, s) ->
+          | `Module(id, s) ->
               Hashtbl.hash (2, loop ~hash id, s)
-          | FunctorParameter(id, s) ->
+          | `FunctorParameter(id, s) ->
               Hashtbl.hash (3, loop ~hash id, s)
-          | FunctorResult id ->
+          | `FunctorResult id ->
               Hashtbl.hash (4, loop ~hash id)
-          | ModuleType(id, s) ->
+          | `ModuleType(id, s) ->
               Hashtbl.hash (5, loop ~hash id, s)
         in
         loop ~hash id
@@ -76,367 +77,371 @@ module Identifier = struct
 
     module Type = struct
 
-      type 'a t =
-        | Type of 'a Signature.t * TypeName.t
-        | CoreType of TypeName.t
-
+      type 'a t = [
+        | `Type of 'a Signature.t * TypeName.t
+        | `CoreType of TypeName.t
+      ]
       let equal ~equal id1 id2 =
         match id1, id2 with
-        | Type(id1, s1), Type(id2, s2) ->
+        | `Type(id1, s1), `Type(id2, s2) ->
             TypeName.equal s1 s2
             && Signature.equal ~equal id1 id2
-        | Type _, _ -> false
-        | CoreType s1, CoreType s2 ->
+        | `Type _, _ -> false
+        | `CoreType s1, `CoreType s2 ->
             TypeName.equal s1 s2
-        | CoreType _, _ -> false
+        | `CoreType _, _ -> false
 
       let hash ~hash id =
         match id with
-        | Type(id, s) ->
+        | `Type(id, s) ->
             Hashtbl.hash (6, Signature.hash ~hash id, s)
-        | CoreType s ->
+        | `CoreType s ->
             Hashtbl.hash (7, s)
 
     end
 
     module ClassSignature = struct
 
-      type 'a t =
-        | Class of 'a Signature.t * ClassName.t
-        | ClassType of 'a Signature.t * ClassTypeName.t
-
+      type 'a t = [
+        | `Class of 'a Signature.t * ClassName.t
+        | `ClassType of 'a Signature.t * ClassTypeName.t
+      ]
       let equal ~equal id1 id2 =
         match id1, id2 with
-        | Class(id1, s1), Class(id2, s2) ->
+        | `Class(id1, s1), `Class(id2, s2) ->
             ClassName.equal s1 s2
             && Signature.equal ~equal id1 id2
-        | Class _, _ -> false
-        | ClassType(id1, s1), ClassType(id2, s2) ->
+        | `Class _, _ -> false
+        | `ClassType(id1, s1), `ClassType(id2, s2) ->
             ClassTypeName.equal s1 s2
             && Signature.equal ~equal id1 id2
-        | ClassType _, _ -> false
+        | `ClassType _, _ -> false
 
       let hash ~hash id =
         match id with
-        | Class(id, s) ->
+        | `Class(id, s) ->
             Hashtbl.hash (14, Signature.hash ~hash id, s)
-        | ClassType(id, s) ->
+        | `ClassType(id, s) ->
             Hashtbl.hash (15, Signature.hash ~hash id, s)
 
     end
 
     module FieldParent = struct
 
-      type 'a t =
-        | Type of 'a Signature.t * TypeName.t
-        | CoreType of TypeName.t
-        | Constructor of 'a Type.t * ConstructorName.t
-        | Extension of 'a Signature.t * ExtensionName.t
-        | Exception of 'a Signature.t * ExceptionName.t
-        | CoreException of ExceptionName.t
-
+      type 'a t = [
+        | `Type of 'a Signature.t * TypeName.t
+        | `CoreType of TypeName.t
+        | `Constructor of 'a Type.t * ConstructorName.t
+        | `Extension of 'a Signature.t * ExtensionName.t
+        | `Exception of 'a Signature.t * ExceptionName.t
+        | `CoreException of ExceptionName.t
+      ]
+      
       let rec equal ~equal id1 id2 =
         match id1, id2 with
-        | Type(id1, s1), Type(id2, s2) ->
+        | `Type(id1, s1), `Type(id2, s2) ->
             TypeName.equal s1 s2
             && Signature.equal ~equal id1 id2
-        | Type _, _ -> false
-        | CoreType s1, CoreType s2 ->
+        | `Type _, _ -> false
+        | `CoreType s1, `CoreType s2 ->
             TypeName.equal s1 s2
-        | CoreType _, _ -> false
-        | Constructor(id1, s1), Constructor(id2, s2) ->
+        | `CoreType _, _ -> false
+        | `Constructor(id1, s1), `Constructor(id2, s2) ->
             ConstructorName.equal s1 s2
             && Type.equal ~equal id1 id2
-        | Constructor _, _ -> false
-        | Extension(id1, s1), Extension(id2, s2) ->
+        | `Constructor _, _ -> false
+        | `Extension(id1, s1), `Extension(id2, s2) ->
             ExtensionName.equal s1 s2
             && Signature.equal ~equal id1 id2
-        | Extension _, _ -> false
-        | Exception(id1, s1), Exception(id2, s2) ->
+        | `Extension _, _ -> false
+        | `Exception(id1, s1), `Exception(id2, s2) ->
             ExceptionName.equal s1 s2
             && Signature.equal ~equal id1 id2
-        | Exception _, _ -> false
-        | CoreException s1, CoreException s2 ->
+        | `Exception _, _ -> false
+        | `CoreException s1, `CoreException s2 ->
             ExceptionName.equal s1 s2
-        | CoreException _, _ -> false
+        | `CoreException _, _ -> false
 
       let hash ~hash id =
         match id with
-        | Type(id, s) ->
+        | `Type(id, s) ->
             Hashtbl.hash (6, Signature.hash ~hash id, s)
-        | CoreType s ->
+        | `CoreType s ->
             Hashtbl.hash (7, s)
-        | Constructor(id, s) ->
+        | `Constructor(id, s) ->
             Hashtbl.hash (8, Type.hash ~hash id, s)
-        | Extension(id, s) ->
+        | `Extension(id, s) ->
             Hashtbl.hash (10, Signature.hash ~hash id, s)
-        | Exception(id, s) ->
+        | `Exception(id, s) ->
             Hashtbl.hash (11, Signature.hash ~hash id, s)
-        | CoreException s ->
+        | `CoreException s ->
             Hashtbl.hash (12, s)
 
     end
 
     module LabelParent = struct
 
-      type 'a t =
-        | Root of 'a * UnitName.t
-        | Module of 'a Signature.t * ModuleName.t
-        | FunctorParameter of 'a Signature.t * FunctorParameterName.t
-        | FunctorResult of 'a Signature.t
-        | ModuleType of 'a Signature.t * ModuleTypeName.t
-        | Class of 'a Signature.t * ClassName.t
-        | ClassType of 'a Signature.t * ClassTypeName.t
-        | Page of 'a * PageName.t
+      type 'a t = [
+        | `Root of 'a * UnitName.t
+        | `Module of 'a Signature.t * ModuleName.t
+        | `FunctorParameter of 'a Signature.t * FunctorParameterName.t
+        | `FunctorResult of 'a Signature.t
+        | `ModuleType of 'a Signature.t * ModuleTypeName.t
+        | `Class of 'a Signature.t * ClassName.t
+        | `ClassType of 'a Signature.t * ClassTypeName.t
+        | `Page of 'a * PageName.t
+      ]
 
       let rec equal ~equal id1 id2 =
         match id1, id2 with
-        | Root(r1, s1), Root(r2, s2) ->
+        | `Root(r1, s1), `Root(r2, s2) ->
             UnitName.equal s1 s2
             && equal r1 r2
-        | Root _, _ -> false
-        | Module(id1, s1), Module(id2, s2) ->
+        | `Root _, _ -> false
+        | `Module(id1, s1), `Module(id2, s2) ->
             ModuleName.equal s1 s2
             && Signature.equal ~equal id1 id2
-        | Module _, _ -> false
-        | FunctorParameter(id1, s1), FunctorParameter(id2, s2) ->
+        | `Module _, _ -> false
+        | `FunctorParameter(id1, s1), `FunctorParameter(id2, s2) ->
             FunctorParameterName.equal s1 s2
             && Signature.equal ~equal id1 id2
-        | FunctorParameter _, _ -> false
-        | FunctorResult id1, FunctorResult id2 ->
+        | `FunctorParameter _, _ -> false
+        | `FunctorResult id1, `FunctorResult id2 ->
             Signature.equal ~equal id1 id2
-        | FunctorResult _, _ -> false
-        | ModuleType(id1, s1), ModuleType(id2, s2) ->
+        | `FunctorResult _, _ -> false
+        | `ModuleType(id1, s1), `ModuleType(id2, s2) ->
             ModuleTypeName.equal s1 s2
             && Signature.equal ~equal id1 id2
-        | ModuleType _, _ -> false
-        | Class(id1, s1), Class(id2, s2) ->
+        | `ModuleType _, _ -> false
+        | `Class(id1, s1), `Class(id2, s2) ->
             ClassName.equal s1 s2
             && Signature.equal ~equal id1 id2
-        | Class _, _ -> false
-        | ClassType(id1, s1), ClassType(id2, s2) ->
+        | `Class _, _ -> false
+        | `ClassType(id1, s1), `ClassType(id2, s2) ->
             ClassTypeName.equal s1 s2
             && Signature.equal ~equal id1 id2
-        | ClassType _, _ -> false
-        | Page(r1, s1), Page(r2, s2) ->
+        | `ClassType _, _ -> false
+        | `Page(r1, s1), `Page(r2, s2) ->
             PageName.equal s1 s2
             && equal r1 r2
-        | Page _, _ -> false
+        | `Page _, _ -> false
 
       let hash ~hash id =
         match id with
-        | Root(r, s) ->
+        | `Root(r, s) ->
             Hashtbl.hash (1, hash r, s)
-        | Module(id, s) ->
+        | `Module(id, s) ->
             Hashtbl.hash (2, Signature.hash ~hash id, s)
-        | FunctorParameter(id, s) ->
+        | `FunctorParameter(id, s) ->
             Hashtbl.hash (3, Signature.hash ~hash id, s)
-        | FunctorResult id ->
+        | `FunctorResult id ->
             Hashtbl.hash (4, Signature.hash ~hash id)
-        | ModuleType(id, s) ->
+        | `ModuleType(id, s) ->
             Hashtbl.hash (5, Signature.hash ~hash id, s)
-        | Class(id, s) ->
+        | `Class(id, s) ->
             Hashtbl.hash (14, Signature.hash ~hash id, s)
-        | ClassType(id, s) ->
+        | `ClassType(id, s) ->
             Hashtbl.hash (15, Signature.hash ~hash id, s)
-        | Page(r, s) ->
+        | `Page(r, s) ->
           Hashtbl.hash (19, hash r, s)
 
     end
 
   end
 
-  type 'a t =
-    | Root of 'a * UnitName.t
-    | Module of 'a Pre.Signature.t * ModuleName.t
-    | FunctorParameter of 'a Pre.Signature.t * FunctorParameterName.t
-    | FunctorResult of 'a Pre.Signature.t
-    | ModuleType of 'a Pre.Signature.t * ModuleTypeName.t
-    | Type of 'a Pre.Signature.t * TypeName.t
-    | CoreType of TypeName.t
-    | Constructor of 'a Pre.Type.t * ConstructorName.t
-    | Field of 'a Pre.FieldParent.t * FieldName.t
-    | Extension of 'a Pre.Signature.t * ExtensionName.t
-    | Exception of 'a Pre.Signature.t * ExceptionName.t
-    | CoreException of ExceptionName.t
-    | Value of 'a Pre.Signature.t * ValueName.t
-    | Class of 'a Pre.Signature.t * ClassName.t
-    | ClassType of 'a Pre.Signature.t * ClassTypeName.t
-    | Method of 'a Pre.ClassSignature.t * MethodName.t
-    | InstanceVariable of 'a Pre.ClassSignature.t * InstanceVariableName.t
-    | Label of 'a Pre.LabelParent.t * LabelName.t
-    | Page of 'a * PageName.t
+  type 'a t = [
+      `Root of 'a * UnitName.t
+    | `Module of 'a Pre.Signature.t * ModuleName.t
+    | `FunctorParameter of 'a Pre.Signature.t * FunctorParameterName.t
+    | `FunctorResult of 'a Pre.Signature.t
+    | `ModuleType of 'a Pre.Signature.t * ModuleTypeName.t
+    | `Type of 'a Pre.Signature.t * TypeName.t
+    | `CoreType of TypeName.t
+    | `Constructor of 'a Pre.Type.t * ConstructorName.t
+    | `Field of 'a Pre.FieldParent.t * FieldName.t
+    | `Extension of 'a Pre.Signature.t * ExtensionName.t
+    | `Exception of 'a Pre.Signature.t * ExceptionName.t
+    | `CoreException of ExceptionName.t
+    | `Value of 'a Pre.Signature.t * ValueName.t
+    | `Class of 'a Pre.Signature.t * ClassName.t
+    | `ClassType of 'a Pre.Signature.t * ClassTypeName.t
+    | `Method of 'a Pre.ClassSignature.t * MethodName.t
+    | `InstanceVariable of 'a Pre.ClassSignature.t * InstanceVariableName.t
+    | `Label of 'a Pre.LabelParent.t * LabelName.t
+    | `Page of 'a * PageName.t ]
 
   let equal ~equal id1 id2 =
     match id1, id2 with
-    | Root(r1, s1), Root(r2, s2) ->
+    | `Root(r1, s1), `Root(r2, s2) ->
         UnitName.equal s1 s2
         && equal r1 r2
-    | Root _, _ -> false
-    | Module(id1, s1), Module(id2, s2) ->
+    | `Root _, _ -> false
+    | `Module(id1, s1), `Module(id2, s2) ->
         ModuleName.equal s1 s2
         && Pre.Signature.equal ~equal id1 id2
-    | Module _, _ -> false
-    | FunctorParameter(id1, s1), FunctorParameter(id2, s2) ->
+    | `Module _, _ -> false
+    | `FunctorParameter(id1, s1), `FunctorParameter(id2, s2) ->
         FunctorParameterName.equal s1 s2
         && Pre.Signature.equal ~equal id1 id2
-    | FunctorParameter _, _ -> false
-    | FunctorResult id1, FunctorResult id2 ->
+    | `FunctorParameter _, _ -> false
+    | `FunctorResult id1, `FunctorResult id2 ->
         Pre.Signature.equal ~equal id1 id2
-    | FunctorResult _, _ -> false
-    | ModuleType(id1, s1), ModuleType(id2, s2) ->
+    | `FunctorResult _, _ -> false
+    | `ModuleType(id1, s1), `ModuleType(id2, s2) ->
         ModuleTypeName.equal s1 s2
         && Pre.Signature.equal ~equal id1 id2
-    | ModuleType _, _ -> false
-    | Type(id1, s1), Type(id2, s2) ->
+    | `ModuleType _, _ -> false
+    | `Type(id1, s1), `Type(id2, s2) ->
         TypeName.equal s1 s2
         && Pre.Signature.equal ~equal id1 id2
-    | Type _, _ -> false
-    | CoreType s1, CoreType s2 ->
+    | `Type _, _ -> false
+    | `CoreType s1, `CoreType s2 ->
         TypeName.equal s1 s2
-    | CoreType _, _ -> false
-    | Constructor(id1, s1), Constructor(id2, s2) ->
+    | `CoreType _, _ -> false
+    | `Constructor(id1, s1), `Constructor(id2, s2) ->
         ConstructorName.equal s1 s2
         && Pre.Type.equal ~equal id1 id2
-    | Constructor _, _ -> false
-    | Field(id1, s1), Field(id2, s2) ->
+    | `Constructor _, _ -> false
+    | `Field(id1, s1), `Field(id2, s2) ->
         FieldName.equal s1 s2
         && Pre.FieldParent.equal ~equal id1 id2
-    | Field _, _ -> false
-    | Extension(id1, s1), Extension(id2, s2) ->
+    | `Field _, _ -> false
+    | `Extension(id1, s1), `Extension(id2, s2) ->
         ExtensionName.equal s1 s2
         && Pre.Signature.equal ~equal id1 id2
-    | Extension _, _ -> false
-    | Exception(id1, s1), Exception(id2, s2) ->
+    | `Extension _, _ -> false
+    | `Exception(id1, s1), `Exception(id2, s2) ->
         ExceptionName.equal s1 s2
         && Pre.Signature.equal ~equal id1 id2
-    | Exception _, _ -> false
-    | CoreException s1, CoreException s2 ->
+    | `Exception _, _ -> false
+    | `CoreException s1, `CoreException s2 ->
         ExceptionName.equal s1 s2
-    | CoreException _, _ -> false
-    | Value(id1, s1), Value(id2, s2) ->
+    | `CoreException _, _ -> false
+    | `Value(id1, s1), `Value(id2, s2) ->
         ValueName.equal s1 s2
         && Pre.Signature.equal ~equal id1 id2
-    | Value _, _ -> false
-    | Class(id1, s1), Class(id2, s2) ->
+    | `Value _, _ -> false
+    | `Class(id1, s1), `Class(id2, s2) ->
         ClassName.equal s1 s2
         && Pre.Signature.equal ~equal id1 id2
-    | Class _, _ -> false
-    | ClassType(id1, s1), ClassType(id2, s2) ->
+    | `Class _, _ -> false
+    | `ClassType(id1, s1), `ClassType(id2, s2) ->
         ClassTypeName.equal s1 s2
         && Pre.Signature.equal ~equal id1 id2
-    | ClassType _, _ -> false
-    | Method(id1, s1), Method(id2, s2) ->
+    | `ClassType _, _ -> false
+    | `Method(id1, s1), `Method(id2, s2) ->
         MethodName.equal s1 s2
         && Pre.ClassSignature.equal ~equal id1 id2
-    | Method _, _ -> false
-    | InstanceVariable(id1, s1), InstanceVariable(id2, s2) ->
+    | `Method _, _ -> false
+    | `InstanceVariable(id1, s1), `InstanceVariable(id2, s2) ->
         InstanceVariableName.equal s1 s2
         && Pre.ClassSignature.equal ~equal id1 id2
-    | InstanceVariable _, _ -> false
-    | Label(id1, s1), Label(id2, s2) ->
+    | `InstanceVariable _, _ -> false
+    | `Label(id1, s1), `Label(id2, s2) ->
         LabelName.equal s1 s2
         && Pre.LabelParent.equal ~equal id1 id2
-    | Label _, _ -> false
-    | Page(r1, s1), Page(r2, s2) ->
+    | `Label _, _ -> false
+    | `Page(r1, s1), `Page(r2, s2) ->
         PageName.equal s1 s2
         && equal r1 r2
-    | Page _, _ -> false
+    | `Page _, _ -> false
 
   let hash ~hash id =
     match id with
-    | Root(r, s) ->
+    | `Root(r, s) ->
         Hashtbl.hash (1, hash r, s)
-    | Module(id, s) ->
+    | `Module(id, s) ->
         Hashtbl.hash (2, Pre.Signature.hash ~hash id, s)
-    | FunctorParameter(id, s) ->
+    | `FunctorParameter(id, s) ->
         Hashtbl.hash (3, Pre.Signature.hash ~hash id, s)
-    | FunctorResult id ->
+    | `FunctorResult id ->
         Hashtbl.hash (4, Pre.Signature.hash ~hash id)
-    | ModuleType(id, s) ->
+    | `ModuleType(id, s) ->
         Hashtbl.hash (5, Pre.Signature.hash ~hash id, s)
-    | Type(id, s) ->
+    | `Type(id, s) ->
         Hashtbl.hash (6, Pre.Signature.hash ~hash id, s)
-    | CoreType s ->
+    | `CoreType s ->
         Hashtbl.hash (7, s)
-    | Constructor(id, s) ->
+    | `Constructor(id, s) ->
         Hashtbl.hash (8, Pre.Type.hash ~hash id, s)
-    | Field(id, s) ->
+    | `Field(id, s) ->
         Hashtbl.hash (9, Pre.FieldParent.hash ~hash id, s)
-    | Extension(id, s) ->
+    | `Extension(id, s) ->
         Hashtbl.hash (10, Pre.Signature.hash ~hash id, s)
-    | Exception(id, s) ->
+    | `Exception(id, s) ->
         Hashtbl.hash (11, Pre.Signature.hash ~hash id, s)
-    | CoreException s ->
+    | `CoreException s ->
         Hashtbl.hash (12, s)
-    | Value(id, s) ->
+    | `Value(id, s) ->
         Hashtbl.hash (13, Pre.Signature.hash ~hash id, s)
-    | Class(id, s) ->
+    | `Class(id, s) ->
         Hashtbl.hash (14, Pre.Signature.hash ~hash id, s)
-    | ClassType(id, s) ->
+    | `ClassType(id, s) ->
         Hashtbl.hash (15, Pre.Signature.hash ~hash id, s)
-    | Method(id, s) ->
+    | `Method(id, s) ->
         Hashtbl.hash (16, Pre.ClassSignature.hash ~hash id, s)
-    | InstanceVariable(id, s) ->
+    | `InstanceVariable(id, s) ->
         Hashtbl.hash (17, Pre.ClassSignature.hash ~hash id, s)
-    | Label(id, s) ->
+    | `Label(id, s) ->
         Hashtbl.hash (18, Pre.LabelParent.hash ~hash id, s)
-    | Page(r, s) ->
+    | `Page(r, s) ->
         Hashtbl.hash (19, hash r, s)
 
   module Module = struct
 
-    type 'a t =
-      | Root of 'a * UnitName.t
-      | Module of 'a Pre.Signature.t * ModuleName.t
-      | FunctorParameter of 'a Pre.Signature.t * FunctorParameterName.t
-      | FunctorResult of 'a Pre.Signature.t
+    type 'a t = [
+      | `Root of 'a * UnitName.t
+      | `Module of 'a Pre.Signature.t * ModuleName.t
+      | `FunctorParameter of 'a Pre.Signature.t * FunctorParameterName.t
+      | `FunctorResult of 'a Pre.Signature.t
+    ]
 
     let equal ~equal id1 id2 =
       match id1, id2 with
-      | Root(r1, s1), Root(r2, s2) ->
+      | `Root(r1, s1), `Root(r2, s2) ->
           UnitName.equal s1 s2
           && equal r1 r2
-      | Root _, _ -> false
-      | Module(id1, s1), Module(id2, s2) ->
+      | `Root _, _ -> false
+      | `Module(id1, s1), `Module(id2, s2) ->
           ModuleName.equal s1 s2
           && Pre.Signature.equal ~equal id1 id2
-      | Module _, _ -> false
-      | FunctorParameter(id1, s1), FunctorParameter(id2, s2) ->
+      | `Module _, _ -> false
+      | `FunctorParameter(id1, s1), `FunctorParameter(id2, s2) ->
           FunctorParameterName.equal s1 s2
           && Pre.Signature.equal ~equal id1 id2
-      | FunctorParameter _, _ -> false
-      | FunctorResult id1, FunctorResult id2 ->
+      | `FunctorParameter _, _ -> false
+      | `FunctorResult id1, `FunctorResult id2 ->
           Pre.Signature.equal ~equal id1 id2
-      | FunctorResult _, _ -> false
+      | `FunctorResult _, _ -> false
 
     let hash ~hash id =
       match id with
-      | Root(r, s) ->
+      | `Root(r, s) ->
           Hashtbl.hash (1, hash r, s)
-      | Module(id, s) ->
+      | `Module(id, s) ->
           Hashtbl.hash (2, Pre.Signature.hash ~hash id, s)
-      | FunctorParameter(id, s) ->
+      | `FunctorParameter(id, s) ->
           Hashtbl.hash (3, Pre.Signature.hash ~hash id, s)
-      | FunctorResult id ->
+      | `FunctorResult id ->
           Hashtbl.hash (4, Pre.Signature.hash ~hash id)
 
   end
 
   module ModuleType = struct
 
-    type 'a t =
-      | ModuleType of 'a Pre.Signature.t * ModuleTypeName.t
+    type 'a t = [
+      | `ModuleType of 'a Pre.Signature.t * ModuleTypeName.t
+    ]
 
     let equal ~equal id1 id2 =
       match id1, id2 with
-      | ModuleType(id1, s1), ModuleType(id2, s2) ->
+      | `ModuleType(id1, s1), `ModuleType(id2, s2) ->
           ModuleTypeName.equal s1 s2
           && Pre.Signature.equal ~equal id1 id2
 
     let hash ~hash id =
       match id with
-      | ModuleType(id, s) ->
+      | `ModuleType(id, s) ->
           Hashtbl.hash (5, Pre.Signature.hash ~hash id, s)
 
   end
@@ -449,205 +454,216 @@ module Identifier = struct
 
   module Constructor = struct
 
-    type 'a t =
-      | Constructor of 'a Pre.Type.t * ConstructorName.t
+    type 'a t = [
+      | `Constructor of 'a Pre.Type.t * ConstructorName.t
+    ]
 
     let equal ~equal id1 id2 =
       match id1, id2 with
-      | Constructor(id1, s1), Constructor(id2, s2) ->
+      | `Constructor(id1, s1), `Constructor(id2, s2) ->
           ConstructorName.equal s1 s2
           && Pre.Type.equal ~equal id1 id2
 
     let hash ~hash id =
       match id with
-      | Constructor(id, s) ->
+      | `Constructor(id, s) ->
           Hashtbl.hash (8, Pre.Type.hash ~hash id, s)
 
   end
 
   module Field = struct
 
-    type 'a t =
-      | Field of 'a Pre.FieldParent.t * FieldName.t
+    type 'a t = [
+      | `Field of 'a Pre.FieldParent.t * FieldName.t
+    ]
 
     let equal ~equal id1 id2 =
       match id1, id2 with
-      | Field(id1, s1), Field(id2, s2) ->
+      | `Field(id1, s1), `Field(id2, s2) ->
           FieldName.equal s1 s2
           && Pre.FieldParent.equal ~equal id1 id2
 
     let hash ~hash id =
       match id with
-      | Field(id, s) ->
+      | `Field(id, s) ->
           Hashtbl.hash (9, Pre.FieldParent.hash ~hash id, s)
 
   end
 
   module Extension = struct
 
-    type 'a t =
-      | Extension of 'a Pre.Signature.t * ExtensionName.t
+    type 'a t = [
+      | `Extension of 'a Pre.Signature.t * ExtensionName.t
+    ]
 
     let equal ~equal id1 id2 =
       match id1, id2 with
-      | Extension(id1, s1), Extension(id2, s2) ->
+      | `Extension(id1, s1), `Extension(id2, s2) ->
           ExtensionName.equal s1 s2
           && Pre.Signature.equal ~equal id1 id2
 
     let hash ~hash id =
       match id with
-      | Extension(id, s) ->
+      | `Extension(id, s) ->
           Hashtbl.hash (10, Pre.Signature.hash ~hash id, s)
 
   end
 
   module Exception = struct
 
-    type 'a t =
-      | Exception of 'a Pre.Signature.t * ExceptionName.t
-      | CoreException of ExceptionName.t
+    type 'a t = [
+      | `Exception of 'a Pre.Signature.t * ExceptionName.t
+      | `CoreException of ExceptionName.t
+    ]
 
     let equal ~equal id1 id2 =
       match id1, id2 with
-      | Exception(id1, s1), Exception(id2, s2) ->
+      | `Exception(id1, s1), `Exception(id2, s2) ->
           ExceptionName.equal s1 s2
           && Pre.Signature.equal ~equal id1 id2
-      | Exception _, _ -> false
-      | CoreException s1, CoreException s2 ->
+      | `Exception _, _ -> false
+      | `CoreException s1, `CoreException s2 ->
           ExceptionName.equal s1 s2
-      | CoreException _, _ -> false
+      | `CoreException _, _ -> false
 
     let hash ~hash id =
       match id with
-      | Exception(id, s) ->
+      | `Exception(id, s) ->
           Hashtbl.hash (11, Pre.Signature.hash ~hash id, s)
-      | CoreException s ->
+      | `CoreException s ->
           Hashtbl.hash (12, s)
 
   end
 
   module Value = struct
 
-    type 'a t =
-      | Value of 'a Pre.Signature.t * ValueName.t
+    type 'a t = [
+      | `Value of 'a Pre.Signature.t * ValueName.t
+    ]
 
     let equal ~equal id1 id2 =
       match id1, id2 with
-      | Value(id1, s1), Value(id2, s2) ->
+      | `Value(id1, s1), `Value(id2, s2) ->
           ValueName.equal s1 s2
           && Pre.Signature.equal ~equal id1 id2
 
     let hash ~hash id =
       match id with
-      | Value(id, s) ->
+      | `Value(id, s) ->
           Hashtbl.hash (13, Pre.Signature.hash ~hash id, s)
 
   end
 
   module Class = struct
 
-    type 'a t =
-      | Class of 'a Pre.Signature.t * ClassName.t
+    type 'a t = [
+      | `Class of 'a Pre.Signature.t * ClassName.t
+    ]
 
     let equal ~equal id1 id2 =
       match id1, id2 with
-      | Class(id1, s1), Class(id2, s2) ->
+      | `Class(id1, s1), `Class(id2, s2) ->
           ClassName.equal s1 s2
           && Pre.Signature.equal ~equal id1 id2
 
     let hash ~hash id =
       match id with
-      | Class(id, s) ->
+      | `Class(id, s) ->
           Hashtbl.hash (14, Pre.Signature.hash ~hash id, s)
 
   end
 
   module ClassType = struct
 
-    type 'a t =
-      | ClassType of 'a Pre.Signature.t * ClassTypeName.t
+    type 'a t = [
+      | `ClassType of 'a Pre.Signature.t * ClassTypeName.t
+    ]
 
     let equal ~equal id1 id2 =
       match id1, id2 with
-      | ClassType(id1, s1), ClassType(id2, s2) ->
+      | `ClassType(id1, s1), `ClassType(id2, s2) ->
           ClassTypeName.equal s1 s2
           && Pre.Signature.equal ~equal id1 id2
 
     let hash ~hash id =
       match id with
-      | ClassType(id, s) ->
+      | `ClassType(id, s) ->
           Hashtbl.hash (15, Pre.Signature.hash ~hash id, s)
 
   end
 
   module Method = struct
 
-    type 'a t =
-      | Method of 'a Pre.ClassSignature.t * MethodName.t
+    type 'a t = [
+      | `Method of 'a Pre.ClassSignature.t * MethodName.t
+    ]
 
     let equal ~equal id1 id2 =
       match id1, id2 with
-      | Method(id1, s1), Method(id2, s2) ->
+      | `Method(id1, s1), `Method(id2, s2) ->
           MethodName.equal s1 s2
           && Pre.ClassSignature.equal ~equal id1 id2
 
     let hash ~hash id =
       match id with
-      | Method(id, s) ->
+      | `Method(id, s) ->
           Hashtbl.hash (16, Pre.ClassSignature.hash ~hash id, s)
 
   end
 
   module InstanceVariable = struct
 
-    type 'a t =
-      | InstanceVariable of 'a Pre.ClassSignature.t * InstanceVariableName.t
+    type 'a t = [
+      | `InstanceVariable of 'a Pre.ClassSignature.t * InstanceVariableName.t
+    ]
 
     let equal ~equal id1 id2 =
       match id1, id2 with
-      | InstanceVariable(id1, s1), InstanceVariable(id2, s2) ->
+      | `InstanceVariable(id1, s1), `InstanceVariable(id2, s2) ->
           InstanceVariableName.equal s1 s2
           && Pre.ClassSignature.equal ~equal id1 id2
 
     let hash ~hash id =
       match id with
-      | InstanceVariable(id, s) ->
+      | `InstanceVariable(id, s) ->
           Hashtbl.hash (17, Pre.ClassSignature.hash ~hash id, s)
 
   end
 
   module Label = struct
 
-    type 'a t =
-      | Label of 'a Pre.LabelParent.t * LabelName.t
+    type 'a t = [
+      | `Label of 'a Pre.LabelParent.t * LabelName.t
+    ]
 
     let equal ~equal id1 id2 =
       match id1, id2 with
-      | Label(id1, s1), Label(id2, s2) ->
+      | `Label(id1, s1), `Label(id2, s2) ->
           LabelName.equal s1 s2
           && Pre.LabelParent.equal ~equal id1 id2
 
     let hash ~hash id =
       match id with
-      | Label(id, s) ->
+      | `Label(id, s) ->
           Hashtbl.hash (18, Pre.LabelParent.hash ~hash id, s)
 
   end
 
   module Page = struct
 
-    type 'a t =
-      | Page of 'a * PageName.t
+    type 'a t = [
+      | `Page of 'a * PageName.t
+    ]
 
     let equal ~equal id1 id2 =
       match id1, id2 with
-      | Page(r1, s1), Page(r2, s2) ->
+      | `Page(r1, s1), `Page(r2, s2) ->
           PageName.equal s1 s2
           && equal r1 r2
 
     let hash ~hash id =
       match id with
-      | Page(r, s) ->
+      | `Page(r, s) ->
           Hashtbl.hash (19, hash r, s)
 
   end
@@ -656,192 +672,80 @@ module Identifier = struct
 
     include Pre.Signature
 
-    let of_module : 'a Module.t -> 'a t = function
-      | Root(r, s) -> Root(r, s)
-      | Module(m, s) -> Module(m, s)
-      | FunctorParameter(m, s) -> FunctorParameter(m, s)
-      | FunctorResult m -> FunctorResult m
+    let of_module m = (m : 'a Module.t :> 'a t)
 
-    let of_module_type : 'a ModuleType.t -> 'a t = function
-      | ModuleType(m, s) -> ModuleType(m, s)
+    let of_module_type m = (m : 'a ModuleType.t :> 'a t)
 
   end
 
   module ClassSignature = struct
-
     include Pre.ClassSignature
 
-    let of_class : 'a Class.t -> 'a t = function
-      | Class(m, s) -> Class(m, s)
-
-    let of_class_type : 'a ClassType.t -> 'a t = function
-      | ClassType(m, s) -> ClassType(m, s)
-
+    let of_class m = (m: 'a Class.t :> 'a t)
+    let of_class_type m = (m : 'a ClassType.t :> 'a t)
   end
 
   module FieldParent = struct
-
     include Pre.FieldParent
 
-    let of_type : 'a Type.t -> 'a t = function
-      | Type(m, s) -> Type(m, s)
-      | CoreType s -> CoreType s
-
-    let of_constructor : 'a Constructor.t -> 'a t = function
-      | Constructor(m, s) -> Constructor(m, s)
-
-    let of_extension : 'a Extension.t -> 'a t = function
-      | Extension(m, s) -> Extension(m, s)
-
-    let of_exception : 'a Exception.t -> 'a t = function
-      | Exception(m, s) -> Exception(m, s)
-      | CoreException s -> CoreException s
-
+    let of_type m = (m: 'a Type.t :> 'a t)
+    let of_constructor m = (m: 'a Constructor.t :> 'a t)
+    let of_extension m = (m: 'a Extension.t :> 'a t)
+    let of_exception m = (m: 'a Exception.t :> 'a t)
   end
 
   module LabelParent = struct
-
     include Pre.LabelParent
 
-    let of_module : 'a Module.t -> 'a t = function
-      | Root(r, s) -> Root(r, s)
-      | Module(m, s) -> Module(m, s)
-      | FunctorParameter(m, s) -> FunctorParameter(m, s)
-      | FunctorResult m -> FunctorResult m
-
-    let of_module_type : 'a ModuleType.t -> 'a t = function
-      | ModuleType(m, s) -> ModuleType(m, s)
-
-    let of_class : 'a Class.t -> 'a t = function
-      | Class(m, s) -> Class(m, s)
-
-    let of_class_type : 'a ClassType.t -> 'a t = function
-      | ClassType(m, s) -> ClassType(m, s)
-
-    let of_page : 'a Page.t -> 'a t = function
-      | Page(m, s) -> Page(m, s)
-
-    let of_signature : 'a Signature.t -> 'a t = function
-      | Root(r, s) -> Root(r, s)
-      | Module(m, s) -> Module(m, s)
-      | FunctorParameter(m, s) -> FunctorParameter(m, s)
-      | FunctorResult m -> FunctorResult m
-      | ModuleType(m, s) -> ModuleType(m, s)
-
-    let of_class_signature : 'a ClassSignature.t -> 'a t = function
-      | Class(m, s) -> Class(m, s)
-      | ClassType(m, s) -> ClassType(m, s)
-
+    let of_module m = (m : 'a Module.t :> 'a t)
+    let of_module_type m = (m: 'a ModuleType.t :> 'a t)
+    let of_class c = (c : 'a Class.t :> 'a t)
+    let of_class_type c = (c : 'a ClassType.t :> 'a t)
+    let of_page p = (p : 'a Page.t :> 'a t)
+    let of_signature s = (s : 'a Signature.t :> 'a t)
+    let of_class_signature s = (s : 'a ClassSignature.t :> 'a t)
   end
 
-  let of_module : 'a Module.t -> 'a t = function
-    | Root(r, s) -> Root(r, s)
-    | Module(m, s) -> Module(m, s)
-    | FunctorParameter(m, s) -> FunctorParameter(m, s)
-    | FunctorResult m -> FunctorResult m
+  let of_module m = (m : 'a Module.t :> 'a t)
+  let of_module_type m = (m : 'a ModuleType.t :> 'a t)
+  let of_type t = (t : 'a Type.t :> 'a t)
+  let of_constructor c = (c : 'a Constructor.t :> 'a t)
+  let of_field f = (f : 'a Field.t :> 'a t)
+  let of_extension e = (e : 'a Extension.t :> 'a t)
+  let of_exception e = (e : 'a Exception.t :> 'a t)
+  let of_value v = ( v: 'a Value.t :> 'a t)
+  let of_class c = ( c : 'a Class.t :> 'a t)
+  let of_class_type t = (t : 'a ClassType.t :> 'a t)
+  let of_method m = ( m: 'a Method.t :> 'a t)
+  let of_instance_variable i = ( i: 'a InstanceVariable.t :> 'a t)
+  let of_label l = (l : 'a Label.t :> 'a t)
+  let of_page p = (p : 'a Page.t :> 'a t)
+  let of_signature s = ( s: 'a Signature.t :> 'a t)
 
-  let of_module_type : 'a ModuleType.t -> 'a t = function
-    | ModuleType(m, s) -> ModuleType(m, s)
-
-  let of_type : 'a Type.t -> 'a t = function
-    | Type(m, s) -> Type(m, s)
-    | CoreType s -> CoreType s
-
-  let of_constructor : 'a Constructor.t -> 'a t = function
-    | Constructor(m, s) -> Constructor(m, s)
-
-  let of_field : 'a Field.t -> 'a t = function
-    | Field(m, s) -> Field(m, s)
-
-  let of_extension : 'a Extension.t -> 'a t = function
-    | Extension(m, s) -> Extension(m, s)
-
-  let of_exception : 'a Exception.t -> 'a t = function
-    | Exception(m, s) -> Exception(m, s)
-    | CoreException s -> CoreException s
-
-  let of_value : 'a Value.t -> 'a t = function
-    | Value(m, s) -> Value(m, s)
-
-  let of_class : 'a Class.t -> 'a t = function
-    | Class(m, s) -> Class(m, s)
-
-  let of_class_type : 'a ClassType.t -> 'a t = function
-    | ClassType(m, s) -> ClassType(m, s)
-
-  let of_method : 'a Method.t -> 'a t = function
-    | Method(m, s) -> Method(m, s)
-
-  let of_instance_variable : 'a InstanceVariable.t -> 'a t = function
-    | InstanceVariable(m, s) -> InstanceVariable(m, s)
-
-  let of_label : 'a Label.t -> 'a t = function
-    | Label(m, s) -> Label(m, s)
-
-  let of_page : 'a Page.t -> 'a t = function
-    | Page(m, s) -> Page(m, s)
-
-  let of_signature : 'a Signature.t -> 'a t = function
-    | Root(r, s) -> Root(r, s)
-    | Module(m, s) -> Module(m, s)
-    | FunctorParameter(m, s) -> FunctorParameter(m, s)
-    | FunctorResult m -> FunctorResult m
-    | ModuleType(m, s) -> ModuleType(m, s)
-
-  let of_class_signature : 'a ClassSignature.t -> 'a t = function
-    | Class(m, s) -> Class(m, s)
-    | ClassType(m, s) -> ClassType(m, s)
-
-  let of_field_parent : 'a FieldParent.t -> 'a t = function
-    | Type(m, s) -> Type(m, s)
-    | CoreType s -> CoreType s
-    | Constructor(m, s) -> Constructor(m, s)
-    | Extension(m, s) -> Extension(m, s)
-    | Exception(m, s) -> Exception(m, s)
-    | CoreException s -> CoreException s
-
-  let of_label_parent : 'a LabelParent.t -> 'a t = function
-    | Root(r, s) -> Root(r, s)
-    | Module(m, s) -> Module(m, s)
-    | FunctorParameter(m, s) -> FunctorParameter(m, s)
-    | FunctorResult m -> FunctorResult m
-    | ModuleType(m, s) -> ModuleType(m, s)
-    | Class(m, s) -> Class(m, s)
-    | ClassType(m, s) -> ClassType(m, s)
-    | Page(m, s) -> Page(m, s)
+  let of_class_signature s = (s : 'a ClassSignature.t :> 'a t)
+  let of_field_parent f = (f : 'a FieldParent.t :> 'a t)
+  let of_label_parent l = (l : 'a LabelParent.t :> 'a t)
 
   (* Identifier types for paths *)
   module Path = struct
 
-    type 'a t =
-      | Root of 'a * UnitName.t
-      | Module of 'a Pre.Signature.t * ModuleName.t
-      | FunctorParameter of 'a Pre.Signature.t * FunctorParameterName.t
-      | FunctorResult of 'a Pre.Signature.t
-      | ModuleType of 'a Pre.Signature.t * ModuleTypeName.t
-      | Type of 'a Signature.t * TypeName.t
-      | CoreType of TypeName.t
-      | Class of 'a Signature.t * ClassName.t
-      | ClassType of 'a Signature.t * ClassTypeName.t
+    type 'a t = [
+      | `Root of 'a * UnitName.t
+      | `Module of 'a Pre.Signature.t * ModuleName.t
+      | `FunctorParameter of 'a Pre.Signature.t * FunctorParameterName.t
+      | `FunctorResult of 'a Pre.Signature.t
+      | `ModuleType of 'a Pre.Signature.t * ModuleTypeName.t
+      | `Type of 'a Signature.t * TypeName.t
+      | `CoreType of TypeName.t
+      | `Class of 'a Signature.t * ClassName.t
+      | `ClassType of 'a Signature.t * ClassTypeName.t
+    ]
 
-    let of_module : 'a Module.t -> 'a t = function
-      | Root(r, s) -> Root(r, s)
-      | Module(m, s) -> Module(m, s)
-      | FunctorParameter(m, s) -> FunctorParameter(m, s)
-      | FunctorResult m -> FunctorResult m
-
-    let of_module_type : 'a ModuleType.t -> 'a t = function
-      | ModuleType(m, s) -> ModuleType(m, s)
-
-    let of_type : 'a Type.t -> 'a t = function
-      | Type(m, s) -> Type(m, s)
-      | CoreType s -> CoreType s
-
-    let of_class : 'a Class.t -> 'a t = function
-      | Class(m, s) -> Class(m, s)
-
-    let of_class_type : 'a ClassType.t -> 'a t = function
-      | ClassType(m, s) -> ClassType(m, s)
+    let of_module m = ( m: 'a Module.t :> 'a t)
+    let of_module_type m = (m: 'a ModuleType.t :> 'a t)
+    let of_type t = (t : 'a Type.t :> 'a t)
+    let of_class c = (c : 'a Class.t :> 'a t)
+    let of_class_type c = (c : 'a ClassType.t :> 'a t)
 
     module Module = struct
 
@@ -861,80 +765,43 @@ module Identifier = struct
 
     module Type = struct
 
-      type 'a t =
-        | Type of 'a Signature.t * TypeName.t
-        | CoreType of TypeName.t
-        | Class of 'a Signature.t * ClassName.t
-        | ClassType of 'a Signature.t * ClassTypeName.t
+      type 'a t = [
+        | `Type of 'a Signature.t * TypeName.t
+        | `CoreType of TypeName.t
+        | `Class of 'a Signature.t * ClassName.t
+        | `ClassType of 'a Signature.t * ClassTypeName.t
+      ]
 
-      let of_type : 'a Type.t -> 'a t = function
-        | Type(m, s) -> Type(m, s)
-        | CoreType s -> CoreType s
-
-      let of_class : 'a Class.t -> 'a t = function
-        | Class(m, s) -> Class(m, s)
-
-      let of_class_type : 'a ClassType.t -> 'a t = function
-        | ClassType(m, s) -> ClassType(m, s)
+      let of_type t = (t : 'a Type.t :> 'a t)
+      let of_class c = (c : 'a Class.t :> 'a t)
+      let of_class_type c = (c : 'a ClassType.t :> 'a t)
 
     end
 
     module ClassType = struct
 
-      type 'a t =
-        | Class of 'a Signature.t * ClassName.t
-        | ClassType of 'a Signature.t * ClassTypeName.t
+      type 'a t = [
+        | `Class of 'a Signature.t * ClassName.t
+        | `ClassType of 'a Signature.t * ClassTypeName.t
+      ]
 
-      let of_class : 'a Class.t -> 'a t = function
-        | Class(m, s) -> Class(m, s)
-
-      let of_class_type : 'a ClassType.t -> 'a t = function
-        | ClassType(m, s) -> ClassType(m, s)
-
+      let of_class c = (c: 'a Class.t :> 'a t)
+      let of_class_type c =( c: 'a ClassType.t :> 'a t)
     end
 
-    let of_path_module : 'a Module.t -> 'a t = function
-      | Root(r, s) -> Root(r, s)
-      | Module(m, s) -> Module(m, s)
-      | FunctorParameter(m, s) -> FunctorParameter(m, s)
-      | FunctorResult m -> FunctorResult m
-
-    let of_path_module_type : 'a ModuleType.t -> 'a t = function
-      | ModuleType(m, s) -> ModuleType(m, s)
-
-    let of_path_type : 'a Type.t -> 'a t = function
-      | Type(m, s) -> Type(m, s)
-      | CoreType s -> CoreType s
-      | Class(m, s) -> Class(m, s)
-      | ClassType(m, s) -> ClassType(m, s)
-
-    let of_path_class_type : 'a ClassType.t -> 'a t = function
-      | Class(m, s) -> Class(m, s)
-      | ClassType(m, s) -> ClassType(m, s)
-
+    let of_path_module p = (p: 'a Module.t :> 'a t)
+    let of_path_module_type p = (p : 'a ModuleType.t :> 'a t)
+    let of_path_type p = (p : 'a Type.t :> 'a t)
+    let of_path_class_type p = (p : 'a ClassType.t :> 'a t)
   end
 
   let of_path_module = of_module
 
   let of_path_module_type = of_module_type
 
-  let of_path_type : 'a Path.Type.t -> 'a t = function
-    | Type(m, s) -> Type(m, s)
-    | CoreType s -> CoreType s
-    | Class(m, s) -> Class(m, s)
-    | ClassType(m, s) -> ClassType(m, s)
+  let of_path_type p = (p : 'a Path.Type.t :> 'a t)
 
-  let of_path : 'a Path.t -> 'a t = function
-    | Root(r, s) -> Root(r, s)
-    | Module(m, s) -> Module(m, s)
-    | FunctorParameter(m, s) -> FunctorParameter(m, s)
-    | FunctorResult m -> FunctorResult m
-    | ModuleType(m, s) -> ModuleType(m, s)
-    | Type(m, s) -> Type(m, s)
-    | CoreType s -> CoreType s
-    | Class(m, s) -> Class(m, s)
-    | ClassType(m, s) -> ClassType(m, s)
-
+  let of_path p = (p : 'a Path.t :> 'a t)
 end
 
 module rec Simple : sig

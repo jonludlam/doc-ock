@@ -23,11 +23,12 @@ module Identifier : sig
 
   module rec Module : sig
 
-    type 'a t =
-      | Root of 'a * UnitName.t
-      | Module of 'a Signature.t * ModuleName.t
-      | FunctorParameter of 'a Signature.t * FunctorParameterName.t
-      | FunctorResult of 'a Signature.t
+    type 'a t = [
+      | `Root of 'a * UnitName.t
+      | `Module of 'a Signature.t * ModuleName.t
+      | `FunctorParameter of 'a Signature.t * FunctorParameterName.t
+      | `FunctorResult of 'a Signature.t
+    ]
 
     val equal : equal:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
@@ -37,8 +38,9 @@ module Identifier : sig
 
   and ModuleType : sig
 
-    type 'a t =
-      | ModuleType of 'a Signature.t * ModuleTypeName.t
+    type 'a t = [
+      | `ModuleType of 'a Signature.t * ModuleTypeName.t
+    ]
 
     val equal : equal:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
@@ -48,9 +50,10 @@ module Identifier : sig
 
   and Type :sig
 
-    type 'a t =
-      | Type of 'a Signature.t * TypeName.t
-      | CoreType of TypeName.t
+    type 'a t = [
+      | `Type of 'a Signature.t * TypeName.t
+      | `CoreType of TypeName.t
+    ]
 
     val equal : equal:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
@@ -60,8 +63,9 @@ module Identifier : sig
 
   and Constructor : sig
 
-    type 'a t =
-      | Constructor of 'a Type.t * ConstructorName.t
+    type 'a t = [
+      | `Constructor of 'a Type.t * ConstructorName.t
+    ]
 
     val equal : equal:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
@@ -71,8 +75,9 @@ module Identifier : sig
 
   and Field : sig
 
-    type 'a t =
-      | Field of 'a FieldParent.t * FieldName.t
+    type 'a t = [
+      | `Field of 'a FieldParent.t * FieldName.t
+    ]
 
     val equal : equal:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
@@ -82,8 +87,9 @@ module Identifier : sig
 
   and Extension : sig
 
-    type 'a t =
-      | Extension of 'a Signature.t * ExtensionName.t
+    type 'a t = [
+      | `Extension of 'a Signature.t * ExtensionName.t
+    ]
 
     val equal : equal:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
@@ -93,9 +99,10 @@ module Identifier : sig
 
   and Exception : sig
 
-    type 'a t =
-      | Exception of 'a Signature.t * ExceptionName.t
-      | CoreException of ExceptionName.t
+    type 'a t = [
+      | `Exception of 'a Signature.t * ExceptionName.t
+      | `CoreException of ExceptionName.t
+    ]
 
     val equal : equal:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
@@ -105,8 +112,9 @@ module Identifier : sig
 
   and Value : sig
 
-    type 'a t =
-      | Value of 'a Signature.t * ValueName.t
+    type 'a t = [
+      | `Value of 'a Signature.t * ValueName.t
+    ]
 
     val equal : equal:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
@@ -116,8 +124,9 @@ module Identifier : sig
 
   and Class : sig
 
-    type 'a t =
-      | Class of 'a Signature.t * ClassName.t
+    type 'a t = [
+      | `Class of 'a Signature.t * ClassName.t
+    ]
 
     val equal : equal:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
@@ -127,8 +136,9 @@ module Identifier : sig
 
   and ClassType : sig
 
-    type 'a t =
-      | ClassType of 'a Signature.t * ClassTypeName.t
+    type 'a t = [
+      | `ClassType of 'a Signature.t * ClassTypeName.t
+    ]
 
     val equal : equal:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
@@ -138,8 +148,9 @@ module Identifier : sig
 
   and Method : sig
 
-    type 'a t =
-      | Method of 'a ClassSignature.t * MethodName.t
+    type 'a t = [
+      | `Method of 'a ClassSignature.t * MethodName.t
+    ]
 
     val equal : equal:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
@@ -149,8 +160,9 @@ module Identifier : sig
 
   and InstanceVariable : sig
 
-    type 'a t =
-      | InstanceVariable of 'a ClassSignature.t * InstanceVariableName.t
+    type 'a t = [
+      | `InstanceVariable of 'a ClassSignature.t * InstanceVariableName.t
+    ]
 
     val equal : equal:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
@@ -160,8 +172,9 @@ module Identifier : sig
 
   and Label : sig
 
-    type 'a t =
-      | Label of 'a LabelParent.t * LabelName.t
+    type 'a t = [
+      | `Label of 'a LabelParent.t * LabelName.t
+    ]
 
     val equal : equal:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
@@ -171,8 +184,9 @@ module Identifier : sig
 
   and Page : sig
 
-    type 'a t =
-      | Page of 'a * PageName.t
+    type 'a t = [
+      | `Page of 'a * PageName.t
+    ]
 
     val equal : equal:('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
@@ -182,12 +196,13 @@ module Identifier : sig
 
   and Signature : sig
 
-    type 'a t =
-      | Root of 'a * UnitName.t
-      | Module of 'a Signature.t * ModuleName.t
-      | FunctorParameter of 'a Signature.t * FunctorParameterName.t
-      | FunctorResult of 'a Signature.t
-      | ModuleType of 'a Signature.t * ModuleTypeName.t
+    type 'a t = [
+      | `Root of 'a * UnitName.t
+      | `Module of 'a Signature.t * ModuleName.t
+      | `FunctorParameter of 'a Signature.t * FunctorParameterName.t
+      | `FunctorResult of 'a Signature.t
+      | `ModuleType of 'a Signature.t * ModuleTypeName.t
+    ]
 
     val of_module : 'a Module.t -> 'a t
 
@@ -201,10 +216,10 @@ module Identifier : sig
 
   and ClassSignature : sig
 
-    type 'a t =
-      | Class of 'a Signature.t * ClassName.t
-      | ClassType of 'a Signature.t * ClassTypeName.t
-
+    type 'a t = [
+      | `Class of 'a Signature.t * ClassName.t
+      | `ClassType of 'a Signature.t * ClassTypeName.t
+    ]
     val of_class : 'a Class.t -> 'a t
 
     val of_class_type : 'a ClassType.t -> 'a t
@@ -217,13 +232,14 @@ module Identifier : sig
 
   and FieldParent : sig
 
-    type 'a t =
-      | Type of 'a Signature.t * TypeName.t
-      | CoreType of TypeName.t
-      | Constructor of 'a Type.t * ConstructorName.t
-      | Extension of 'a Signature.t * ExtensionName.t
-      | Exception of 'a Signature.t * ExceptionName.t
-      | CoreException of ExceptionName.t
+    type 'a t = [
+      | `Type of 'a Signature.t * TypeName.t
+      | `CoreType of TypeName.t
+      | `Constructor of 'a Type.t * ConstructorName.t
+      | `Extension of 'a Signature.t * ExtensionName.t
+      | `Exception of 'a Signature.t * ExceptionName.t
+      | `CoreException of ExceptionName.t
+    ]
 
     val of_type : 'a Type.t -> 'a t
 
@@ -241,15 +257,16 @@ module Identifier : sig
 
   and LabelParent : sig
 
-    type 'a t =
-      | Root of 'a * UnitName.t
-      | Module of 'a Signature.t * ModuleName.t
-      | FunctorParameter of 'a Signature.t * FunctorParameterName.t
-      | FunctorResult of 'a Signature.t
-      | ModuleType of 'a Signature.t * ModuleTypeName.t
-      | Class of 'a Signature.t * ClassName.t
-      | ClassType of 'a Signature.t * ClassTypeName.t
-      | Page of 'a * PageName.t
+    type 'a t = [
+      | `Root of 'a * UnitName.t
+      | `Module of 'a Signature.t * ModuleName.t
+      | `FunctorParameter of 'a Signature.t * FunctorParameterName.t
+      | `FunctorResult of 'a Signature.t
+      | `ModuleType of 'a Signature.t * ModuleTypeName.t
+      | `Class of 'a Signature.t * ClassName.t
+      | `ClassType of 'a Signature.t * ClassTypeName.t
+      | `Page of 'a * PageName.t
+    ]
 
     val of_module : 'a Module.t -> 'a t
 
@@ -271,26 +288,27 @@ module Identifier : sig
 
   end
 
-  type 'a t =
-    | Root of 'a * UnitName.t
-    | Module of 'a Signature.t * ModuleName.t
-    | FunctorParameter of 'a Signature.t * FunctorParameterName.t
-    | FunctorResult of 'a Signature.t
-    | ModuleType of 'a Signature.t * ModuleTypeName.t
-    | Type of 'a Signature.t * TypeName.t
-    | CoreType of TypeName.t
-    | Constructor of 'a Type.t * ConstructorName.t
-    | Field of 'a FieldParent.t * FieldName.t
-    | Extension of 'a Signature.t * ExtensionName.t
-    | Exception of 'a Signature.t * ExceptionName.t
-    | CoreException of ExceptionName.t
-    | Value of 'a Signature.t * ValueName.t
-    | Class of 'a Signature.t * ClassName.t
-    | ClassType of 'a Signature.t * ClassTypeName.t
-    | Method of 'a ClassSignature.t * MethodName.t
-    | InstanceVariable of 'a ClassSignature.t * InstanceVariableName.t
-    | Label of 'a LabelParent.t * LabelName.t
-    | Page of 'a * PageName.t
+  type 'a t = [
+    | `Root of 'a * UnitName.t
+    | `Module of 'a Signature.t * ModuleName.t
+    | `FunctorParameter of 'a Signature.t * FunctorParameterName.t
+    | `FunctorResult of 'a Signature.t
+    | `ModuleType of 'a Signature.t * ModuleTypeName.t
+    | `Type of 'a Signature.t * TypeName.t
+    | `CoreType of TypeName.t
+    | `Constructor of 'a Type.t * ConstructorName.t
+    | `Field of 'a FieldParent.t * FieldName.t
+    | `Extension of 'a Signature.t * ExtensionName.t
+    | `Exception of 'a Signature.t * ExceptionName.t
+    | `CoreException of ExceptionName.t
+    | `Value of 'a Signature.t * ValueName.t
+    | `Class of 'a Signature.t * ClassName.t
+    | `ClassType of 'a Signature.t * ClassTypeName.t
+    | `Method of 'a ClassSignature.t * MethodName.t
+    | `InstanceVariable of 'a ClassSignature.t * InstanceVariableName.t
+    | `Label of 'a LabelParent.t * LabelName.t
+    | `Page of 'a * PageName.t
+  ]
 
   val of_module : 'a Module.t -> 'a t
 
@@ -345,16 +363,17 @@ module Identifier : sig
       referent (e.g. a type path may refer to a class definition). *)
   module Path : sig
 
-    type 'a t =
-      | Root of 'a * UnitName.t
-      | Module of 'a Signature.t * ModuleName.t
-      | FunctorParameter of 'a Signature.t * FunctorParameterName.t
-      | FunctorResult of 'a Signature.t
-      | ModuleType of 'a Signature.t * ModuleTypeName.t
-      | Type of 'a Signature.t * TypeName.t
-      | CoreType of TypeName.t
-      | Class of 'a Signature.t * ClassName.t
-      | ClassType of 'a Signature.t * ClassTypeName.t
+    type 'a t = [
+      | `Root of 'a * UnitName.t
+      | `Module of 'a Signature.t * ModuleName.t
+      | `FunctorParameter of 'a Signature.t * FunctorParameterName.t
+      | `FunctorResult of 'a Signature.t
+      | `ModuleType of 'a Signature.t * ModuleTypeName.t
+      | `Type of 'a Signature.t * TypeName.t
+      | `CoreType of TypeName.t
+      | `Class of 'a Signature.t * ClassName.t
+      | `ClassType of 'a Signature.t * ClassTypeName.t
+    ]
 
     val of_module : 'a Module.t -> 'a t
 
@@ -366,11 +385,12 @@ module Identifier : sig
 
     module Module : sig
 
-      type 'a t =
-        | Root of 'a * UnitName.t
-        | Module of 'a Signature.t * ModuleName.t
-        | FunctorParameter of 'a Signature.t * FunctorParameterName.t
-        | FunctorResult of 'a Signature.t
+      type 'a t = [
+        | `Root of 'a * UnitName.t
+        | `Module of 'a Signature.t * ModuleName.t
+        | `FunctorParameter of 'a Signature.t * FunctorParameterName.t
+        | `FunctorResult of 'a Signature.t
+      ]
 
       val of_module : 'a Module.t -> 'a t
 
@@ -378,8 +398,9 @@ module Identifier : sig
 
     module ModuleType : sig
 
-      type 'a t =
-        | ModuleType of 'a Signature.t * ModuleTypeName.t
+      type 'a t = [
+        | `ModuleType of 'a Signature.t * ModuleTypeName.t
+      ]
 
       val of_module_type : 'a ModuleType.t -> 'a t
 
@@ -387,11 +408,12 @@ module Identifier : sig
 
     module Type : sig
 
-      type 'a t =
-        | Type of 'a Signature.t * TypeName.t
-        | CoreType of TypeName.t
-        | Class of 'a Signature.t * ClassName.t
-        | ClassType of 'a Signature.t * ClassTypeName.t
+      type 'a t = [
+        | `Type of 'a Signature.t * TypeName.t
+        | `CoreType of TypeName.t
+        | `Class of 'a Signature.t * ClassName.t
+        | `ClassType of 'a Signature.t * ClassTypeName.t
+      ]
 
       val of_type : 'a Type.t -> 'a t
 
@@ -403,9 +425,10 @@ module Identifier : sig
 
     module ClassType : sig
 
-      type 'a t =
-        | Class of 'a Signature.t * ClassName.t
-        | ClassType of 'a Signature.t * ClassTypeName.t
+      type 'a t = [
+        | `Class of 'a Signature.t * ClassName.t
+        | `ClassType of 'a Signature.t * ClassTypeName.t
+      ]
 
       val of_class : 'a Class.t -> 'a t
 
@@ -440,7 +463,7 @@ module rec Simple : sig
 
     module Module : sig
 
-      type 'a t =
+      type 'a t = 
         | Identifier of 'a Identifier.Module.t
         | Module of 'a t * ModuleName.t
         | Alias of 'a Simple.Module.t * 'a t

@@ -66,68 +66,68 @@ let nativeint_name = TypeName.of_string "nativeint"
 let lazy_t_name = TypeName.of_string "lazy_t"
 let extension_constructor_name = TypeName.of_string "extension_constructor"
 
-let bool_identifier = Identifier.Type.CoreType bool_name
-let int_identifier = Identifier.Type.CoreType int_name
-let char_identifier = Identifier.Type.CoreType char_name
-let bytes_identifier = Identifier.Type.CoreType bytes_name
-let string_identifier = Identifier.Type.CoreType string_name
-let float_identifier = Identifier.Type.CoreType float_name
-let bool_identifier = Identifier.Type.CoreType bool_name
-let unit_identifier = Identifier.Type.CoreType unit_name
-let exn_identifier = Identifier.Type.CoreType exn_name
-let array_identifier = Identifier.Type.CoreType array_name
-let list_identifier = Identifier.Type.CoreType list_name
-let option_identifier = Identifier.Type.CoreType option_name
-let int32_identifier = Identifier.Type.CoreType int32_name
-let int64_identifier = Identifier.Type.CoreType int64_name
-let nativeint_identifier = Identifier.Type.CoreType nativeint_name
-let lazy_t_identifier = Identifier.Type.CoreType lazy_t_name
+let bool_identifier = `CoreType bool_name
+let int_identifier = `CoreType int_name
+let char_identifier = `CoreType char_name
+let bytes_identifier = `CoreType bytes_name
+let string_identifier = `CoreType string_name
+let float_identifier = `CoreType float_name
+let bool_identifier = `CoreType bool_name
+let unit_identifier = `CoreType unit_name
+let exn_identifier = `CoreType exn_name
+let array_identifier = `CoreType array_name
+let list_identifier = `CoreType list_name
+let option_identifier = `CoreType option_name
+let int32_identifier = `CoreType int32_name
+let int64_identifier = `CoreType int64_name
+let nativeint_identifier = `CoreType nativeint_name
+let lazy_t_identifier = `CoreType lazy_t_name
 let extension_constructor_identifier =
-  Identifier.Type.CoreType extension_constructor_name
+  `CoreType extension_constructor_name
 
 (* These are needed due to the value restriction.
    If variance wasn't broken with recursive modules then the
    relaxed value restriction would save us. *)
-let bool_path_identifier = Identifier.Path.Type.CoreType bool_name
-let int_path_identifier = Identifier.Path.Type.CoreType int_name
-let char_path_identifier = Identifier.Path.Type.CoreType char_name
-let bytes_path_identifier = Identifier.Path.Type.CoreType bytes_name
-let string_path_identifier = Identifier.Path.Type.CoreType string_name
-let float_path_identifier = Identifier.Path.Type.CoreType float_name
-let bool_path_identifier = Identifier.Path.Type.CoreType bool_name
-let unit_path_identifier = Identifier.Path.Type.CoreType unit_name
-let exn_path_identifier = Identifier.Path.Type.CoreType exn_name
-let array_path_identifier = Identifier.Path.Type.CoreType array_name
-let list_path_identifier = Identifier.Path.Type.CoreType list_name
-let option_path_identifier = Identifier.Path.Type.CoreType option_name
-let int32_path_identifier = Identifier.Path.Type.CoreType int32_name
-let int64_path_identifier = Identifier.Path.Type.CoreType int64_name
-let nativeint_path_identifier = Identifier.Path.Type.CoreType nativeint_name
-let lazy_t_path_identifier = Identifier.Path.Type.CoreType lazy_t_name
+let bool_path_identifier = `CoreType bool_name
+let int_path_identifier = `CoreType int_name
+let char_path_identifier = `CoreType char_name
+let bytes_path_identifier = `CoreType bytes_name
+let string_path_identifier = `CoreType string_name
+let float_path_identifier = `CoreType float_name
+let bool_path_identifier = `CoreType bool_name
+let unit_path_identifier = `CoreType unit_name
+let exn_path_identifier = `CoreType exn_name
+let array_path_identifier = `CoreType array_name
+let list_path_identifier = `CoreType list_name
+let option_path_identifier = `CoreType option_name
+let int32_path_identifier = `CoreType int32_name
+let int64_path_identifier = `CoreType int64_name
+let nativeint_path_identifier = `CoreType nativeint_name
+let lazy_t_path_identifier = `CoreType lazy_t_name
 let extension_constructor_path_identifier =
-  Identifier.Path.Type.CoreType extension_constructor_name
+  `CoreType extension_constructor_name
 
 (* These are needed due to the value restriction.
    If variance wasn't broken with recursive modules then the
    relaxed value restriction would save us. *)
-let bool_reference_identifier = Identifier.CoreType bool_name
-let int_reference_identifier = Identifier.CoreType int_name
-let char_reference_identifier = Identifier.CoreType char_name
-let bytes_reference_identifier = Identifier.CoreType bytes_name
-let string_reference_identifier = Identifier.CoreType string_name
-let float_reference_identifier = Identifier.CoreType float_name
-let bool_reference_identifier = Identifier.CoreType bool_name
-let unit_reference_identifier = Identifier.CoreType unit_name
-let exn_reference_identifier = Identifier.CoreType exn_name
-let array_reference_identifier = Identifier.CoreType array_name
-let list_reference_identifier = Identifier.CoreType list_name
-let option_reference_identifier = Identifier.CoreType option_name
-let int32_reference_identifier = Identifier.CoreType int32_name
-let int64_reference_identifier = Identifier.CoreType int64_name
-let nativeint_reference_identifier = Identifier.CoreType nativeint_name
-let lazy_t_reference_identifier = Identifier.CoreType lazy_t_name
+let bool_reference_identifier = `CoreType bool_name
+let int_reference_identifier = `CoreType int_name
+let char_reference_identifier = `CoreType char_name
+let bytes_reference_identifier = `CoreType bytes_name
+let string_reference_identifier = `CoreType string_name
+let float_reference_identifier = `CoreType float_name
+let bool_reference_identifier = `CoreType bool_name
+let unit_reference_identifier = `CoreType unit_name
+let exn_reference_identifier = `CoreType exn_name
+let array_reference_identifier = `CoreType array_name
+let list_reference_identifier = `CoreType list_name
+let option_reference_identifier = `CoreType option_name
+let int32_reference_identifier = `CoreType int32_name
+let int64_reference_identifier = `CoreType int64_name
+let nativeint_reference_identifier = `CoreType nativeint_name
+let lazy_t_reference_identifier = `CoreType lazy_t_name
 let extension_constructor_reference_identifier =
-  Identifier.CoreType extension_constructor_name
+  `CoreType extension_constructor_name
 
 let false_name = ConstructorName.of_string "false"
 let true_name = ConstructorName.of_string "true"
@@ -138,37 +138,37 @@ let none_name = ConstructorName.of_string "None"
 let some_name = ConstructorName.of_string "Some"
 
 let false_identifier =
-  Identifier.Constructor.Constructor(bool_identifier, false_name)
+  `Constructor(bool_identifier, false_name)
 let true_identifier =
-  Identifier.Constructor.Constructor(bool_identifier, true_name)
+  `Constructor(bool_identifier, true_name)
 let void_identifier =
-  Identifier.Constructor.Constructor(unit_identifier, void_name)
+  `Constructor(unit_identifier, void_name)
 let nil_identifier =
-  Identifier.Constructor.Constructor(list_identifier, nil_name)
+  `Constructor(list_identifier, nil_name)
 let cons_identifier =
-  Identifier.Constructor.Constructor(list_identifier, cons_name)
+  `Constructor(list_identifier, cons_name)
 let none_identifier =
-  Identifier.Constructor.Constructor(option_identifier, none_name)
+  `Constructor(option_identifier, none_name)
 let some_identifier =
-  Identifier.Constructor.Constructor(option_identifier, some_name)
+  `Constructor(option_identifier, some_name)
 
 (* These are needed due to the value restriction.
    If variance wasn't broken with recursive modules then the
    relaxed value restriction would save us. *)
 let false_reference_identifier =
-  Identifier.Constructor(bool_identifier, false_name)
+  `Constructor(bool_identifier, false_name)
 let true_reference_identifier =
-  Identifier.Constructor(bool_identifier, true_name)
+  `Constructor(bool_identifier, true_name)
 let void_reference_identifier =
-  Identifier.Constructor(unit_identifier, void_name)
+  `Constructor(unit_identifier, void_name)
 let nil_reference_identifier =
-  Identifier.Constructor(list_identifier, nil_name)
+  `Constructor(list_identifier, nil_name)
 let cons_reference_identifier =
-  Identifier.Constructor(list_identifier, cons_name)
+  `Constructor(list_identifier, cons_name)
 let none_reference_identifier =
-  Identifier.Constructor(option_identifier, none_name)
+  `Constructor(option_identifier, none_name)
 let some_reference_identifier =
-  Identifier.Constructor(option_identifier, some_name)
+  `Constructor(option_identifier, some_name)
 
 let match_failure_name = ExceptionName.of_string "Match_failure"
 let assert_failure_name = ExceptionName.of_string "Assert_failure"
@@ -185,57 +185,57 @@ let undefined_recursive_module_name =
   ExceptionName.of_string "Undefined_recursive_module"
 
 let match_failure_identifier =
-  Identifier.Exception.CoreException match_failure_name
+  `CoreException match_failure_name
 let assert_failure_identifier =
-  Identifier.Exception.CoreException assert_failure_name
+  `CoreException assert_failure_name
 let invalid_argument_identifier =
-  Identifier.Exception.CoreException invalid_argument_name
+  `CoreException invalid_argument_name
 let failure_identifier =
-  Identifier.Exception.CoreException failure_name
+  `CoreException failure_name
 let not_found_identifier =
-  Identifier.Exception.CoreException not_found_name
+  `CoreException not_found_name
 let out_of_memory_identifier =
-  Identifier.Exception.CoreException out_of_memory_name
+  `CoreException out_of_memory_name
 let stack_overflow_identifier =
-  Identifier.Exception.CoreException stack_overflow_name
+  `CoreException stack_overflow_name
 let sys_error_identifier =
-  Identifier.Exception.CoreException sys_error_name
+  `CoreException sys_error_name
 let end_of_file_identifier =
-  Identifier.Exception.CoreException end_of_file_name
+  `CoreException end_of_file_name
 let division_by_zero_identifier =
-  Identifier.Exception.CoreException division_by_zero_name
+  `CoreException division_by_zero_name
 let sys_blocked_io_identifier =
-  Identifier.Exception.CoreException sys_blocked_io_name
+  `CoreException sys_blocked_io_name
 let undefined_recursive_module_identifier =
-  Identifier.Exception.CoreException undefined_recursive_module_name
+  `CoreException undefined_recursive_module_name
 
 (* These are needed due to the value restriction.
    If variance wasn't broken with recursive modules then the
    relaxed value restriction would save us. *)
 let match_failure_reference_identifier =
-  Identifier.CoreException match_failure_name
+  `CoreException match_failure_name
 let assert_failure_reference_identifier =
-  Identifier.CoreException assert_failure_name
+  `CoreException assert_failure_name
 let invalid_argument_reference_identifier =
-  Identifier.CoreException invalid_argument_name
+  `CoreException invalid_argument_name
 let failure_reference_identifier =
-  Identifier.CoreException failure_name
+  `CoreException failure_name
 let not_found_reference_identifier =
-  Identifier.CoreException not_found_name
+  `CoreException not_found_name
 let out_of_memory_reference_identifier =
-  Identifier.CoreException out_of_memory_name
+  `CoreException out_of_memory_name
 let stack_overflow_reference_identifier =
-  Identifier.CoreException stack_overflow_name
+  `CoreException stack_overflow_name
 let sys_error_reference_identifier =
-  Identifier.CoreException sys_error_name
+  `CoreException sys_error_name
 let end_of_file_reference_identifier =
-  Identifier.CoreException end_of_file_name
+  `CoreException end_of_file_name
 let division_by_zero_reference_identifier =
-  Identifier.CoreException division_by_zero_name
+  `CoreException division_by_zero_name
 let sys_blocked_io_reference_identifier =
-  Identifier.CoreException sys_blocked_io_name
+  `CoreException sys_blocked_io_name
 let undefined_recursive_module_reference_identifier =
-  Identifier.CoreException undefined_recursive_module_name
+  `CoreException undefined_recursive_module_name
 
 let core_type_identifier = function
   | "int" -> Some int_identifier

@@ -169,86 +169,86 @@ open DocOckPaths
 let rec identifier_to_sexp sexp_of_root t =
   let open Identifier in
   match t with
-  | Root(r, s) ->
+  | `Root(r, s) ->
       List [ Atom "Root";
              List [sexp_of_root r; UnitName.to_sexp s] ]
-  | Page(r, s) ->
+  | `Page(r, s) ->
       List [ Atom "Root";
              List [sexp_of_root r; PageName.to_sexp s] ]
-  | Module(m, s) ->
+  | `Module(m, s) ->
       let m = of_signature m in
       List [ Atom "Module";
              List [identifier_to_sexp sexp_of_root m;
                    ModuleName.to_sexp s] ]
-  | FunctorParameter(m, s) ->
+  | `FunctorParameter(m, s) ->
       let m = of_signature m in
       List [ Atom "FunctorParameter";
              List [identifier_to_sexp sexp_of_root m;
                    FunctorParameterName.to_sexp s] ]
-  | FunctorResult m ->
+  | `FunctorResult m ->
       let m = of_signature m in
       List [ Atom "FunctorResult";
              List [identifier_to_sexp sexp_of_root m] ]
-  | ModuleType(m, s) ->
+  | `ModuleType(m, s) ->
       let m = of_signature m in
       List [ Atom "ModuleType";
              List [identifier_to_sexp sexp_of_root m;
                    ModuleTypeName.to_sexp s] ]
-  | Type(m, s) ->
+  | `Type(m, s) ->
       let m = of_signature m in
       List [ Atom "Type";
              List [identifier_to_sexp sexp_of_root m;
                    TypeName.to_sexp s] ]
-  | CoreType s ->
+  | `CoreType s ->
       List [ Atom "CoreType"; TypeName.to_sexp s ]
-  | Constructor(t, s) ->
+  | `Constructor(t, s) ->
       let t = Identifier.of_type t in
       List [ Atom "Constructor";
              List [identifier_to_sexp sexp_of_root t;
                    ConstructorName.to_sexp s] ]
-  | Field(t, s) ->
+  | `Field(t, s) ->
       let t = Identifier.of_field_parent t in
       List [ Atom "Field";
              List [identifier_to_sexp sexp_of_root t;
                    FieldName.to_sexp s] ]
-  | Extension(m, s) ->
+  | `Extension(m, s) ->
       let m = of_signature m in
       List [ Atom "Extension";
              List [identifier_to_sexp sexp_of_root m;
                    ExtensionName.to_sexp s] ]
-  | Exception(m, s) ->
+  | `Exception(m, s) ->
       let m = of_signature m in
       List [ Atom "Exception";
              List [identifier_to_sexp sexp_of_root m;
                    ExceptionName.to_sexp s] ]
-  | CoreException s ->
+  | `CoreException s ->
       List [ Atom "CoreException"; ExceptionName.to_sexp s ]
-  | Value(m, s) ->
+  | `Value(m, s) ->
       let m = of_signature m in
       List [ Atom "Value";
              List [identifier_to_sexp sexp_of_root m;
                    ValueName.to_sexp s] ]
-  | Class(m, s) ->
+  | `Class(m, s) ->
       let m = of_signature m in
       List [ Atom "Class";
              List [identifier_to_sexp sexp_of_root m;
                    ClassName.to_sexp s] ]
-  | ClassType(m, s) ->
+  | `ClassType(m, s) ->
       let m = of_signature m in
       List [ Atom "ClassType";
              List [identifier_to_sexp sexp_of_root m;
                    ClassTypeName.to_sexp s] ]
-  | Method(c, s) ->
+  | `Method(c, s) ->
       let c = Identifier.of_class_signature c in
       List [ Atom "Method";
              List [identifier_to_sexp sexp_of_root c;
                    MethodName.to_sexp s] ]
-  | InstanceVariable(c, s) ->
+  | `InstanceVariable(c, s) ->
       let c = Identifier.of_class_signature c in
       List [ Atom "InstanceVariable";
              List [identifier_to_sexp sexp_of_root c;
                    InstanceVariableName.to_sexp s] ]
-  | Label(p, s) ->
+  | `Label(p, s) ->
       let p = Identifier.of_label_parent p in
       List [ Atom "Label";
              List [identifier_to_sexp sexp_of_root p;

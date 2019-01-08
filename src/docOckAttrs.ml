@@ -218,7 +218,7 @@ let rec read_text_element parent
         | None -> Title(i, None, txt)
         | Some name ->
             let name = LabelName.of_string name in
-            let id = DocOckPaths.Identifier.Label.Label(parent, name) in
+            let id = `Label(parent, name) in
               Title(i, Some id, txt)
     end
   | Ref(rk, s, txt) ->

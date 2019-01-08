@@ -36,32 +36,32 @@ let builtin_idents = List.map snd Predef.builtin_idents
 
 let add_module parent id env =
   let name = ModuleName.of_ident id in
-  let identifier = Path.Module.Module(parent, name) in
+  let identifier = `Module(parent, name) in
   let modules = Ident.add id identifier env.modules in
     { env with modules }
 
 let add_parameter parent id env =
   let name = FunctorParameterName.of_ident id in
-  let identifier = Path.Module.FunctorParameter(parent, name) in
+  let identifier = `FunctorParameter(parent, name) in
   let modules = Ident.add id identifier env.modules in
     { env with modules }
 
 let add_module_type parent id env =
   let name = ModuleTypeName.of_ident id in
-  let identifier = Path.ModuleType.ModuleType(parent, name) in
+  let identifier = `ModuleType(parent, name) in
   let module_types = Ident.add id identifier env.module_types in
     { env with module_types }
 
 let add_type parent id env =
   let name = TypeName.of_ident id in
-  let identifier = Path.Type.Type(parent, name) in
+  let identifier = `Type(parent, name) in
   let types = Ident.add id identifier env.types in
     { env with types }
 
 let add_class parent id ty_id obj_id cl_id env =
   let name = ClassName.of_ident id in
-  let type_identifier = Path.Type.Class(parent, name) in
-  let class_type_identifier = Path.ClassType.Class(parent, name) in
+  let type_identifier = `Class(parent, name) in
+  let class_type_identifier = `Class(parent, name) in
   let add_idents identifier tbl =
     Ident.add id identifier
       (Ident.add ty_id identifier
@@ -74,8 +74,8 @@ let add_class parent id ty_id obj_id cl_id env =
 
 let add_class_type parent id obj_id cl_id env =
   let name = ClassTypeName.of_ident id in
-  let type_identifier = Path.Type.ClassType(parent, name) in
-  let class_type_identifier = Path.ClassType.ClassType(parent, name) in
+  let type_identifier = `ClassType(parent, name) in
+  let class_type_identifier = `ClassType(parent, name) in
   let add_idents identifier tbl =
     Ident.add id identifier
          (Ident.add obj_id identifier

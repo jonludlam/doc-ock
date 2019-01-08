@@ -49,14 +49,14 @@ let rec read_pattern env parent doc pat =
     | Tpat_var(id, _) ->
         let open Value in
         let name = ValueName.of_ident id in
-        let id = Identifier.Value.Value(parent, name) in
+        let id = `Value(parent, name) in
           DocOckCmi.mark_type_expr pat.pat_type;
           let type_ = DocOckCmi.read_type_expr env pat.pat_type in
             [Value {id; doc; type_}]
     | Tpat_alias(pat, id, _) ->
         let open Value in
         let name = ValueName.of_ident id in
-        let id = Identifier.Value.Value(parent, name) in
+        let id = `Value(parent, name) in
           DocOckCmi.mark_type_expr pat.pat_type;
           let type_ = DocOckCmi.read_type_expr env pat.pat_type in
             Value {id; doc; type_} :: read_pattern env parent doc pat
@@ -132,7 +132,7 @@ let rec read_class_type_field env parent ctf =
   | Tctf_val(name, mutable_, virtual_, typ) ->
       let open InstanceVariable in
       let name = InstanceVariableName.of_string name in
-      let id = Identifier.InstanceVariable.InstanceVariable(parent, name) in
+      let id = `InstanceVariable(parent, name) in
       let mutable_ = (mutable_ = Mutable) in
       let virtual_ = (virtual_ = Virtual) in
       let type_ = read_core_type env typ in
@@ -140,7 +140,7 @@ let rec read_class_type_field env parent ctf =
   | Tctf_method(name, private_, virtual_, typ) ->
       let open Method in
       let name = MethodName.of_string name in
-      let id = Identifier.Method.Method(parent, name) in
+      let id = `Method(parent, name) in
       let private_ = (private_ = Private) in
       let virtual_ = (virtual_ = Virtual) in
       let type_ = read_core_type env typ in
@@ -209,7 +209,7 @@ let rec read_class_field env parent cf =
   | Tcf_val({txt = name; _}, mutable_, _, kind, _) ->
       let open InstanceVariable in
       let name = InstanceVariableName.of_string name in
-      let id = Identifier.InstanceVariable.InstanceVariable(parent, name) in
+      let id = `InstanceVariable(parent, name) in
       let mutable_ = (mutable_ = Mutable) in
       let virtual_, type_ =
         match kind with
@@ -222,7 +222,7 @@ let rec read_class_field env parent cf =
   | Tcf_method({txt = name; _}, private_, kind) ->
       let open Method in
       let name = MethodName.of_string name in
-      let id = Identifier.Method.Method(parent, name) in
+      let id = `Method(parent, name) in
       let private_ = (private_ = Private) in
       let virtual_, type_ =
         match kind with
@@ -301,7 +301,7 @@ let rec read_class_expr env parent params cl =
 let read_class_declaration env parent cld =
   let open Class in
   let name = ClassName.of_ident cld.ci_id_class in
-  let id = Identifier.Class.Class(parent, name) in
+  let id = `Class(parent, name) in
   let doc = read_class_attributes parent id cld.ci_attributes in
     DocOckCmi.mark_class_declaration cld.ci_decl;
     let virtual_ = (cld.ci_virt = Virtual) in
@@ -342,7 +342,7 @@ let rec read_module_expr env parent mexpr =
           | None -> None
           | Some arg ->
               let name = FunctorParameterName.of_ident id in
-              let id = Identifier.Module.FunctorParameter(parent, name) in
+              let id = `FunctorParameter(parent, name) in
               let parent = Identifier.Signature.of_module id in
               let arg = DocOckCmti.read_module_type env parent arg in
               let expansion =
@@ -353,7 +353,7 @@ let rec read_module_expr env parent mexpr =
                 Some { FunctorParameter. id; expr = arg; expansion }
         in
         let env = Env.add_parameter parent id env in
-        let parent = Identifier.Signature.FunctorResult parent in
+        let parent = `FunctorResult parent in
         let res = read_module_expr env parent res in
           Functor(arg, res)
     | Tmod_apply _ ->
@@ -373,7 +373,7 @@ and unwrap_module_expr_desc = function
 and read_module_binding env parent mb =
   let open Module in
   let name = ModuleName.of_ident mb.mb_id in
-  let id = Identifier.Module.Module(parent, name) in
+  let id = `Module(parent, name) in
   let doc = read_module_attributes parent id mb.mb_attributes in
   let parent = Identifier.Signature.of_module id in
   let canonical =
@@ -478,7 +478,7 @@ and read_structure env parent str =
     List.rev items
 
 let read_implementation root name impl =
-  let id = Identifier.Module.Root(root, name) in
+  let id = `Root(root, name) in
   let parent = Identifier.Signature.of_module id in
   let items = read_structure Env.empty parent impl in
   let doc, items =

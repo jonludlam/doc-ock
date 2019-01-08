@@ -478,7 +478,7 @@ and read_object env fi nm =
 let read_value_description env parent id vd =
   let open Signature in
   let name = ValueName.of_ident id in
-  let id = Identifier.Value.Value(parent, name) in
+  let id = `Value(parent, name) in
   let doc = read_value_attributes parent id vd.val_attributes in
   mark_value_description vd;
   let type_ = read_type_expr env vd.val_type in
@@ -499,7 +499,7 @@ let read_value_description env parent id vd =
 let read_label_declaration env container parent ld =
   let open TypeDecl.Field in
   let name = FieldName.of_ident ld.ld_id in
-  let id = Identifier.Field.Field(parent, name) in
+  let id = `Field(parent, name) in
   let doc = read_field_attributes container id ld.ld_attributes in
   let mutable_ = (ld.ld_mutable = Mutable) in
   let type_ = read_type_expr env ld.ld_type in
@@ -515,7 +515,7 @@ let read_constructor_declaration_arguments env container parent arg =
 let read_constructor_declaration env container parent cd =
   let open TypeDecl.Constructor in
   let name = ConstructorName.of_ident cd.cd_id in
-  let id = Identifier.Constructor.Constructor(parent, name) in
+  let id = `Constructor(parent, name) in
   let doc = read_constructor_attributes container id cd.cd_attributes in
   let field_parent = Identifier.FieldParent.of_constructor id in
   let args =
@@ -573,7 +573,7 @@ let read_type_constraints env params =
 let read_type_declaration env parent id decl =
   let open TypeDecl in
   let name = TypeName.of_ident id in
-  let id = Identifier.Type.Type(parent, name) in
+  let id = `Type(parent, name) in
   let doc = read_type_attributes parent id decl.type_attributes in
   let params = mark_type_declaration decl in
   let manifest = opt_map (read_type_expr env) decl.type_manifest in
@@ -601,7 +601,7 @@ let read_type_declaration env parent id decl =
 let read_extension_constructor env parent id ext =
   let open Extension.Constructor in
   let name = ExtensionName.of_ident id in
-  let id = Identifier.Extension.Extension(parent, name) in
+  let id = `Extension(parent, name) in
   let doc = read_extension_attributes parent id ext.ext_attributes in
   let field_parent = Identifier.FieldParent.of_extension id in
   let args =
@@ -634,7 +634,7 @@ let read_type_extension env parent id ext rest =
 let read_exception env parent id ext =
   let open Exception in
   let name = ExceptionName.of_ident id in
-  let id = Identifier.Exception.Exception(parent, name) in
+  let id = `Exception(parent, name) in
   let doc = read_exception_attributes parent id ext.ext_attributes in
   mark_exception ext;
   let field_parent = Identifier.FieldParent.of_exception id in
@@ -649,7 +649,7 @@ let read_method env parent concrete (name, kind, typ) =
   let open Method in
   let concrete = Concr.mem name concrete in
   let name = MethodName.of_string name in
-  let id = Identifier.Method.Method(parent, name) in
+  let id = `Method(parent, name) in
   let doc = empty in
   let private_ = (Btype.field_kind_repr kind) <> Fpresent in
   let virtual_ = not concrete in
@@ -659,7 +659,7 @@ let read_method env parent concrete (name, kind, typ) =
 let read_instance_variable env parent (name, mutable_, virtual_, typ) =
   let open InstanceVariable in
   let name = InstanceVariableName.of_string name in
-  let id = Identifier.InstanceVariable.InstanceVariable(parent, name) in
+  let id = `InstanceVariable(parent, name) in
   let doc = empty in
   let mutable_ = (mutable_ = Mutable) in
   let virtual_ = (virtual_ = Virtual) in
@@ -736,7 +736,7 @@ let rec read_virtual = function
 let read_class_type_declaration env parent id cltd =
   let open ClassType in
   let name = ClassTypeName.of_ident id in
-  let id = Identifier.ClassType.ClassType(parent, name) in
+  let id = `ClassType(parent, name) in
   let doc = read_class_type_attributes parent id cltd.clty_attributes in
   mark_class_type_declaration cltd;
   let params =
@@ -772,7 +772,7 @@ let rec read_class_type env parent params =
 let read_class_declaration env parent id cld =
   let open Class in
   let name = ClassName.of_ident id in
-  let id = Identifier.Class.Class(parent, name) in
+  let id = `Class(parent, name) in
   let doc = read_class_attributes parent id cld.cty_attributes in
   mark_class_declaration cld;
   let params =
@@ -798,7 +798,7 @@ let rec read_module_type env parent mty =
           | None -> None
           | Some arg ->
               let name = FunctorParameterName.of_ident id in
-              let id = Identifier.Module.FunctorParameter(parent, name) in
+              let id = `FunctorParameter(parent, name) in
               let parent = Identifier.Signature.of_module id in
               let arg = read_module_type env parent arg in
               let expansion =
@@ -809,7 +809,7 @@ let rec read_module_type env parent mty =
                 Some { FunctorParameter. id; expr = arg; expansion }
         in
         let env = Env.add_parameter parent id env in
-        let parent = Identifier.Signature.FunctorResult parent in
+        let parent = `FunctorResult parent in
         let res = read_module_type env parent res in
           Functor(arg, res)
     | Mty_alias _ -> assert false
@@ -817,7 +817,7 @@ let rec read_module_type env parent mty =
 and read_module_type_declaration env parent id mtd =
   let open ModuleType in
   let name = ModuleTypeName.of_ident id in
-  let id = Identifier.ModuleType.ModuleType(parent, name) in
+  let id = `ModuleType(parent, name) in
   let doc = read_module_type_attributes parent id mtd.mtd_attributes in
   let parent = Identifier.Signature.of_module_type id in
   let expr = opt_map (read_module_type env parent) mtd.mtd_type in
@@ -831,7 +831,7 @@ and read_module_type_declaration env parent id mtd =
 and read_module_declaration env parent id md =
   let open Module in
   let name = ModuleName.of_ident id in
-  let id = Identifier.Module.Module(parent, name) in
+  let id = `Module(parent, name) in
   let doc = read_module_attributes parent id md.md_attributes in
   let canonical =
     let open Documentation in
@@ -916,7 +916,7 @@ and read_signature env parent items =
     loop [] items
 
 let read_interface root name intf =
-  let id = Identifier.Module.Root(root, name) in
+  let id = `Root(root, name) in
   let parent = Identifier.Signature.of_module id in
   let doc = empty in
   let items = read_signature Env.empty parent intf in

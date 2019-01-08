@@ -108,7 +108,7 @@ let read_cmt root_fn filename =
         let hidden = Names.UnitName.is_hidden uname in
         let root = root_fn name digest in
         let unit_name = Names.UnitName.of_string name in
-        let id = Paths.Identifier.Module.Root(root, unit_name) in
+        let id = `Root(root, unit_name) in
         let items =
           List.map
             (fun file ->
@@ -122,8 +122,7 @@ let read_cmt root_fn filename =
             (fun name ->
                let open Packed in
                let module_name = Names.ModuleName.of_string name in
-               let parent = Paths.Identifier.Signature.of_module id in
-               let id = Paths.Identifier.Module.Module(parent, module_name) in
+               let id = `Module(id, module_name) in
                let path = Paths.Path.Module.Root name in
                  {id; path})
             items
